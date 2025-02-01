@@ -5,7 +5,7 @@
 Управляйте своими задачами прямо из терминала
 
 
-![Dancing Gopher Sticker](https://github.com/user-attachments/assets/e1c687e9-8816-4d27-b1b9-5fe9deb08443)
+![](https://github.com/user-attachments/assets/e1c687e9-8816-4d27-b1b9-5fe9deb08443](https://media.tenor.com/TCMWkxIkF9IAAAAj/dancing-gopher.gif)
 
 
 ## 📦 Установка
