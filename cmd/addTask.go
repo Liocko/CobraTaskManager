@@ -28,25 +28,11 @@ var addTaskCmd = &cobra.Command{
 			Status:      "✗",
 		}
 		TaskList = append(TaskList, newTask)
-
-		if err := saveTasks(); err != nil {
-			fmt.Println("Error saving tasks: " + err.Error())
-			return
-		}
+		addListToDb(newTask)
 		fmt.Printf("Task added: %s\n", newTask.Title)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(addTaskCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// addTaskCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// addTaskCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

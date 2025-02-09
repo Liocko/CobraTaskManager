@@ -12,33 +12,24 @@ var doneCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		index := parseIndex(args[0])
-
-		if index == -1 || index > (len(TaskList)+1) {
-			fmt.Println("Error, index out of range")
-			return
-		}
-
-		TaskList[index].Status = "✓"
-
-		err := saveTasks()
+		result, err := db.Exec(`UPDATE tasks SET status = "✓" WHERE id = ?`, index+1)
 		if err != nil {
-			fmt.Println("Error, saving tasks ", err)
+			fmt.Println("Error marking task as done: ", err)
 			return
 		}
-		fmt.Printf("Task %d marked as done!\n", index+1)
 
+		rowsAffected, err := result.RowsAffected()
+		if err != nil {
+			fmt.Println("Error getting rows affected: ", err)
+		}
+		if rowsAffected == 0 {
+			fmt.Printf("Task %d not found.\n", index+1)
+		} else {
+			fmt.Printf("Task %d marked as done!\n", index+1)
+		}
 	},
 }
 
-func parseIndex(input string) int {
-	var index int
-	n, err := fmt.Sscanf(input, "%d", &index)
-	if n != 1 || err != nil {
-		fmt.Println("Error, type a digit ", err)
-		return -1
-	}
-	return index - 1
-}
 func init() {
 	rootCmd.AddCommand(doneCmd)
 

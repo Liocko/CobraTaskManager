@@ -15,37 +15,50 @@ var tasklistCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Вывести все задачи в виде таблицы: list",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(TaskList) == 0 {
-			fmt.Println("Task list is empty.")
-			return
+		rows, err := db.Query("SELECT id, title, description, status FROM tasks")
+		if err != nil {
+			fmt.Println("Error database query: ", err)
 		}
-		//	fmt.Println("List of tasks:")
-		//	for i, task := range TaskList {
-		//		fmt.Printf("%d. %s - %s [%s]\n", i+1, task.Title, task.Description, task.Status)
-		//	}
-
+		defer rows.Close()
 		t := table.NewWriter()
 		t.SetOutputMirror(os.Stdout)
 		t.AppendHeader(table.Row{"#", "Task name", "Task description", "Done"})
-		for i, task := range TaskList {
-			t.AppendRow(table.Row{i + 1, task.Title, task.Description, task.Status})
+
+		var found bool
+		for rows.Next() {
+			var id int
+			var title string
+			var description string
+			var status string
+			if err := rows.Scan(&id, &title, &description, &status); err != nil {
+				fmt.Println("Error reading database: ", err)
+				return
+			}
+			t.AppendRow(table.Row{id, title, description, status})
 			t.AppendSeparator()
+		}
+		if !found {
+			fmt.Println("No tasks found")
 		}
 		t.SetStyle(table.StyleLight)
 		t.Render()
 	},
 }
 
+//		if err != nil {
+//			fmt.Println(err)
+//			log.Fatal(err)
+//		}
+//		fmt.Println(rows)
+//
+//		t.AppendRow(table.Row{i + 1, task.Title, task.Description, task.Status})
+//		t.AppendSeparator()
+//	}
+//	t.SetStyle(table.StyleLight)
+//	t.Render()
+//},
+
 func init() {
 	rootCmd.AddCommand(tasklistCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// tasklistCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// tasklistCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
