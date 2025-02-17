@@ -17,3 +17,4 @@ go.work
 go.work.sum
 .env
 .idea/
+.db
